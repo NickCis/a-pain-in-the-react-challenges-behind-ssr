@@ -1,4 +1,4 @@
-# Determining data dependencies example
+# Actually fetching data
 
 ```
 yarn install
