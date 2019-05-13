@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 
 class Home extends Component {
   static async getInitialProps({ fetch }) {
@@ -36,6 +37,7 @@ class Home extends Component {
         <div>
           Fetched data: {data}
         </div>
+        <Link to="/other">Other</Link>
       </div>
     );
   }

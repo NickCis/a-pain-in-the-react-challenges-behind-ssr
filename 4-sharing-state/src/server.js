@@ -25,18 +25,22 @@ server
 
     // Requested url
     const url = req.url;
+    let promise;
+
+    routes.some(route => {
+      const match = matchPath(url, route);
+      const { getInitialProps } = route.component;
+
+      if (match && getInitialProps)
+        promise = getInitialProps({ fetch, match });
+
+      return !!match;
+    });
 
     // XXX: should handle exceptions!
-    const initialState = (await Promise.all(
-      routes.map(route => {
-        const match = matchPath(url, route);
-        const { getInitialProps } = route.component;
-
-        return match && getInitialProps
-          ? getInitialProps({ fetch, match }).then(d => ({ [url]: d }))
-          : undefined;
-      })
-    )).reduce((state, element) => Object.assign(state, element), {});
+    const initialState = {
+      [url]: await promise,
+    };
     const context = {};
     const markup = renderToString(
       <StaticRouter context={context} location={req.url}>

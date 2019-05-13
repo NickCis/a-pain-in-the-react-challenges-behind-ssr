@@ -14,16 +14,20 @@ server
   .get('/*', async (req, res) => {
     // Requested url
     const url = req.url;
+    let promise;
 
-    // XXX: should handle exceptions!
-    await Promise.all(routes.map(route => {
+    routes.some(route => {
       const match = matchPath(url, route);
       const { getInitialProps } = route.component;
 
-      return match && getInitialProps
-        ? getInitialProps()
-        : undefined;
-    }));
+      if (match && getInitialProps)
+        promise = getInitialProps();
+
+      return !!match;
+    });
+
+    // XXX: should handle exceptions!
+    await promise;
 
     const context = {};
     const markup = renderToString(
